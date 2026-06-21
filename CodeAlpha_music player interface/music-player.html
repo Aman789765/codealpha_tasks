@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Music Player — Ambuj Sharma</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+/* ═══════════════════════════════════════ RESET & BASE */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:       #0a0a12;
+  --surface:  #12121e;
+  --card:     #1a1a2e;
+  --glass:    rgba(255,255,255,0.05);
+  --border:   rgba(255,255,255,0.08);
+  --accent:   #7C3AED;
+  --accent2:  #06B6D4;
+  --pink:     #EC4899;
+  --text:     #F1F0FF;
+  --muted:    rgba(241,240,255,0.45);
+  --font:     'Plus Jakarta Sans', sans-serif;
+  --mono:     'Fira Code', monospace;
+}
+html, body { height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+  overflow-x: hidden;
+}
+/* animated background */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 20%, rgba(124,58,237,0.12), transparent),
+    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(6,182,212,0.1), transparent),
+    radial-gradient(ellipse 50% 60% at 50% 50%, rgba(236,72,153,0.06), transparent);
+  pointer-events: none; z-index: 0;
+  animation: bgShift 12s ease-in-out infinite alternate;
+}
+@keyframes bgShift {
+  0%   { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(30deg); }
+}
+
+::selection { background: var(--accent); color: #fff; }
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: var(--surface); }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+/* ═══════════════════════════════════════ LAYOUT */
+.app {
+  position: relative; z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 20px;
+  width: 100%;
+  max-width: 960px;
+}
+
+/* ═══════════════════════════════════════ PLAYER CARD */
+.player-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  padding: 44px 44px 40px;
+  display: flex; flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 40px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(124,58,237,0.06);
+}
+.player-card::before {
+  content: '';
+  position: absolute;
+  top: -60px; left: 50%;
+  transform: translateX(-50%);
+  width: 280px; height: 280px;
+  background: radial-gradient(circle, rgba(124,58,237,0.2), transparent 70%);
+  pointer-events: none;
+}
+
+/* ── album art */
+.album-wrap {
+  position: relative;
+  width: 220px; height: 220px;
+  margin-bottom: 36px;
+}
+.album-shadow {
+  position: absolute;
+  bottom: -20px; left: 50%;
+  transform: translateX(-50%);
+  width: 170px; height: 30px;
+  background: rgba(124,58,237,0.3);
+  filter: blur(20px);
+  border-radius: 50%;
+}
+.album-art {
+  width: 220px; height: 220px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1e1040, #2a1060, #0e2050);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 5rem;
+  position: relative; z-index: 1;
+  border: 3px solid rgba(124,58,237,0.25);
+  box-shadow:
+    0 0 0 8px rgba(124,58,237,0.06),
+    0 0 0 16px rgba(124,58,237,0.03),
+    0 20px 40px rgba(0,0,0,0.4);
+  transition: all 0.5s ease;
+  user-select: none;
+}
+.album-art.spinning {
+  animation: spin 8s linear infinite;
+}
+.album-art.paused { animation-play-state: paused; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* vinyl center dot */
+.album-art::after {
+  content: '';
+  position: absolute;
+  width: 28px; height: 28px;
+  background: var(--card);
+  border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.1);
+}
+
+/* ── song info */
+.song-info {
+  text-align: center;
+  margin-bottom: 32px;
+  width: 100%;
+  min-height: 68px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 6px;
+}
+.song-title {
+  font-size: 1.45rem; font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  white-space: nowrap; overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  transition: opacity 0.3s;
+}
+.song-artist {
+  font-size: 0.82rem; color: var(--muted);
+  font-weight: 500; letter-spacing: 0.03em;
+  transition: opacity 0.3s;
+}
+.song-genre {
+  display: inline-flex; align-items: center;
+  background: rgba(124,58,237,0.12);
+  border: 1px solid rgba(124,58,237,0.2);
+  border-radius: 20px;
+  padding: 2px 10px;
+  font-size: 0.65rem; font-family: var(--mono);
+  color: var(--accent);
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+}
+
+/* ── progress bar */
+.progress-section { width: 100%; margin-bottom: 24px; }
+.progress-bar-wrap {
+  width: 100%; height: 5px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 3px;
+  cursor: pointer; position: relative;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius: 3px;
+  width: 0%;
+  transition: width 0.1s linear;
+  position: relative;
+}
+.progress-bar-fill::after {
+  content: '';
+  position: absolute; right: -4px; top: -4px;
+  width: 13px; height: 13px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(124,58,237,0.6);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.progress-bar-wrap:hover .progress-bar-fill::after { opacity: 1; }
+.time-row {
+  display: flex; justify-content: space-between;
+  font-size: 0.72rem; color: var(--muted);
+  font-family: var(--mono);
+}
+.time-current { color: var(--accent2); font-weight: 500; }
+
+/* ── controls */
+.controls {
+  display: flex; align-items: center;
+  gap: 12px; margin-bottom: 28px;
+}
+.ctrl-btn {
+  width: 44px; height: 44px;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--muted);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 1rem;
+  transition: all 0.2s;
+  outline: none;
+}
+.ctrl-btn:hover {
+  background: rgba(124,58,237,0.12);
+  border-color: rgba(124,58,237,0.3);
+  color: var(--text);
+  transform: scale(1.05);
+}
+.ctrl-btn.active {
+  background: rgba(124,58,237,0.18);
+  border-color: rgba(124,58,237,0.4);
+  color: var(--accent);
+}
+.ctrl-btn svg { pointer-events: none; }
+
+.play-btn {
+  width: 64px; height: 64px;
+  background: linear-gradient(135deg, var(--accent), #9333EA);
+  border: none; border-radius: 18px;
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 1.4rem;
+  box-shadow: 0 8px 30px rgba(124,58,237,0.5);
+  transition: all 0.2s;
+  outline: none;
+}
+.play-btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 12px 40px rgba(124,58,237,0.6);
+  background: linear-gradient(135deg, #9333EA, var(--accent));
+}
+.play-btn:active { transform: scale(0.96); }
+
+/* ── volume + extras */
+.bottom-row {
+  width: 100%;
+  display: flex; align-items: center; gap: 14px;
+}
+.vol-icon { color: var(--muted); font-size: 0.9rem; cursor: pointer; flex-shrink: 0; transition: color 0.2s; }
+.vol-icon:hover { color: var(--text); }
+.vol-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: linear-gradient(90deg, var(--accent) 70%, rgba(255,255,255,0.1) 70%);
+  border-radius: 3px;
+  cursor: pointer;
+  outline: none;
+}
+.vol-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--text);
+  box-shadow: 0 0 6px rgba(124,58,237,0.5);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.vol-slider::-webkit-slider-thumb:hover { transform: scale(1.3); }
+.vol-val {
+  font-family: var(--mono); font-size: 0.68rem;
+  color: var(--muted); width: 28px; text-align: right;
+}
+
+/* ═══════════════════════════════════════ SIDEBAR */
+.sidebar {
+  display: flex; flex-direction: column; gap: 16px;
+}
+
+/* ── autoplay bar */
+.auto-bar {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px;
+}
+.auto-bar-label {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.82rem; font-weight: 600;
+}
+.auto-bar-label span { font-size: 1rem; }
+/* toggle */
+.toggle {
+  width: 44px; height: 24px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 12px;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.3s;
+  flex-shrink: 0;
+  border: none; outline: none;
+}
+.toggle::after {
+  content: '';
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 18px; height: 18px;
+  background: var(--muted);
+  border-radius: 50%;
+  transition: all 0.3s;
+}
+.toggle.on { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+.toggle.on::after { left: 23px; background: #fff; }
+
+/* ── playlist */
+.playlist-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  flex: 1;
+}
+.playlist-header {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.playlist-title-row {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.88rem; font-weight: 700;
+}
+.playlist-title-row span { font-size: 1rem; }
+.playlist-count {
+  font-family: var(--mono); font-size: 0.65rem;
+  color: var(--muted); letter-spacing: 0.08em;
+}
+.playlist-list {
+  max-height: 420px;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+.track-item {
+  display: flex; align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background 0.2s;
+  border-radius: 0;
+  position: relative;
+}
+.track-item:hover { background: rgba(255,255,255,0.04); }
+.track-item.active {
+  background: rgba(124,58,237,0.1);
+}
+.track-item.active::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: linear-gradient(to bottom, var(--accent), var(--accent2));
+  border-radius: 0 2px 2px 0;
+}
+.track-num {
+  font-family: var(--mono); font-size: 0.65rem;
+  color: var(--muted); width: 20px; text-align: center;
+  flex-shrink: 0;
+}
+.track-item.active .track-num { display: none; }
+.play-mini {
+  display: none; width: 20px;
+  align-items: center; justify-content: center;
+  color: var(--accent); font-size: 0.7rem;
+  flex-shrink: 0;
+}
+.track-item.active .play-mini { display: flex; }
+.track-emoji {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(124,58,237,0.2), rgba(6,182,212,0.2));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; flex-shrink: 0;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.track-text { flex: 1; min-width: 0; }
+.track-name {
+  font-size: 0.82rem; font-weight: 600;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  color: var(--text);
+}
+.track-item.active .track-name { color: var(--accent); }
+.track-artist {
+  font-size: 0.7rem; color: var(--muted);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.track-dur {
+  font-family: var(--mono); font-size: 0.65rem;
+  color: var(--muted); flex-shrink: 0;
+}
+
+/* equalizer bars (active track animation) */
+.eq-bars {
+  display: none;
+  gap: 2px; align-items: flex-end;
+  height: 14px;
+  flex-shrink: 0;
+}
+.track-item.active.playing .eq-bars { display: flex; }
+.eq-bar {
+  width: 3px; border-radius: 2px;
+  background: var(--accent);
+}
+.eq-bar:nth-child(1) { animation: eq1 0.8s ease-in-out infinite; }
+.eq-bar:nth-child(2) { animation: eq2 0.6s ease-in-out infinite; }
+.eq-bar:nth-child(3) { animation: eq3 0.9s ease-in-out infinite; }
+@keyframes eq1 { 0%,100%{height:4px} 50%{height:14px} }
+@keyframes eq2 { 0%,100%{height:10px} 50%{height:4px} }
+@keyframes eq3 { 0%,100%{height:7px} 50%{height:12px} }
+
+/* ═══════════════════════════════════════ TOAST */
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: rgba(30,30,50,0.95);
+  border: 1px solid rgba(124,58,237,0.3);
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-size: 0.8rem; color: var(--text);
+  opacity: 0; pointer-events: none;
+  z-index: 1000;
+  transition: all 0.3s;
+  white-space: nowrap;
+  backdrop-filter: blur(12px);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ═══════════════════════════════════════ TRANSITIONS */
+.fade { animation: fadeIn 0.4s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ═══════════════════════════════════════ RESPONSIVE */
+@media (max-width: 720px) {
+  .app { grid-template-columns: 1fr; max-width: 400px; }
+  .player-card { padding: 32px 28px 28px; }
+  .album-wrap { width: 180px; height: 180px; }
+  .album-art { width: 180px; height: 180px; font-size: 4rem; }
+  .playlist-list { max-height: 280px; }
+}
+  </style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ═════════════════════ PLAYER -->
+  <div class="player-card">
+
+    <!-- album art -->
+    <div class="album-wrap">
+      <div class="album-shadow"></div>
+      <div class="album-art spinning paused" id="album-art">🎵</div>
+    </div>
+
+    <!-- song info -->
+    <div class="song-info">
+      <div class="song-title" id="song-title">Loading...</div>
+      <div class="song-artist" id="song-artist">—</div>
+      <div class="song-genre" id="song-genre">—</div>
+    </div>
+
+    <!-- progress -->
+    <div class="progress-section">
+      <div class="progress-bar-wrap" id="progress-wrap">
+        <div class="progress-bar-fill" id="progress-fill"></div>
+      </div>
+      <div class="time-row">
+        <span class="time-current" id="time-current">0:00</span>
+        <span id="time-total">0:00</span>
+      </div>
+    </div>
+
+    <!-- controls -->
+    <div class="controls">
+      <!-- shuffle -->
+      <button class="ctrl-btn" id="btn-shuffle" title="Shuffle" onclick="toggleShuffle()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="16 3 21 3 21 8"/><polyline points="4 20 21 3"/>
+          <polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/>
+        </svg>
+      </button>
+      <!-- prev -->
+      <button class="ctrl-btn" title="Previous" onclick="prevTrack()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/>
+        </svg>
+      </button>
+      <!-- play/pause -->
+      <button class="play-btn" id="btn-play" title="Play / Pause" onclick="togglePlay()">
+        <svg id="play-icon" width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+      </button>
+      <!-- next -->
+      <button class="ctrl-btn" title="Next" onclick="nextTrack()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M16 6h2v12h-2zm-3.5 6L4 6v12z"/>
+        </svg>
+      </button>
+      <!-- repeat -->
+      <button class="ctrl-btn" id="btn-repeat" title="Repeat" onclick="toggleRepeat()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/>
+          <polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- volume -->
+    <div class="bottom-row">
+      <div class="vol-icon" id="vol-icon" onclick="toggleMute()">🔊</div>
+      <input type="range" class="vol-slider" id="vol-slider" min="0" max="100" value="70" oninput="setVolume(this.value)" />
+      <div class="vol-val" id="vol-val">70</div>
+    </div>
+
+  </div>
+
+  <!-- ═════════════════════ SIDEBAR -->
+  <div class="sidebar">
+
+    <!-- autoplay toggle -->
+    <div class="auto-bar">
+      <div class="auto-bar-label">
+        <span>▶</span> Autoplay
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:0.75rem;color:var(--muted)">
+        <span id="auto-label">On</span>
+        <button class="toggle on" id="btn-auto" onclick="toggleAutoplay()"></button>
+      </div>
+    </div>
+
+    <!-- playlist -->
+    <div class="playlist-card">
+      <div class="playlist-header">
+        <div class="playlist-title-row">
+          <span>🎧</span> Playlist
+        </div>
+        <div class="playlist-count" id="playlist-count">0 tracks</div>
+      </div>
+      <div class="playlist-list" id="playlist-list">
+        <!-- filled by JS -->
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- toast -->
+<div class="toast" id="toast"></div>
+
+<!-- hidden audio -->
+<audio id="audio-el" preload="auto"></audio>
+
+<script>
+/* ══════════════════════════════════════════════════
+   PLAYLIST DATA
+   Using royalty-free demo audio from SoundHelix
+══════════════════════════════════════════════════ */
+const TRACKS = [
+  {
+    title: "Sajna Tere Liye",
+    artist: "Badshah",
+    genre: "Bollywood Pop",
+    emoji: "💛",
+    src: "music/sajna.mp3"
+  },
+  {
+    title: "Abhi Na Jao Chhod Kar",
+    artist: "Mohammed Rafi & Asha Bhosle",
+    genre: "Classic Bollywood",
+    emoji: "🎻",
+    src: "music/abhi-na-jao.mp3"
+  },
+  {
+    title: "Bounce World",
+    artist: "Unknown Artist",
+    genre: "Electronic",
+    emoji: "🌍",
+    src: "music/bounce-world.mp3"
+  },
+  {
+    title: "Main Agar Kahoon",
+    artist: "Udit Narayan & Alka Yagnik",
+    genre: "Bollywood Romance",
+    emoji: "💕",
+    src: "music/main-agar-kahoon.mp3"
+  },
+  {
+    title: "Deewana Kar Raha Hai",
+    artist: "Rahat Fateh Ali Khan",
+    genre: "Slowed & Reverb",
+    emoji: "🌌",
+    src: "music/deewana-kar-raha-hai.mp3"
+  },
+];
+
+/* ══════════════════════════════════════════════════
+   STATE
+══════════════════════════════════════════════════ */
+let currentIndex = 0;
+let isPlaying    = false;
+let isShuffle    = false;
+let repeatMode   = 0;   // 0=none 1=all 2=one
+let isAutoplay   = true;
+let isMuted      = false;
+let lastVol      = 70;
+
+const audio     = document.getElementById('audio-el');
+const albumArt  = document.getElementById('album-art');
+const titleEl   = document.getElementById('song-title');
+const artistEl  = document.getElementById('song-artist');
+const genreEl   = document.getElementById('song-genre');
+const fillEl    = document.getElementById('progress-fill');
+const curEl     = document.getElementById('time-current');
+const totEl     = document.getElementById('time-total');
+const playIcon  = document.getElementById('play-icon');
+const volSlider = document.getElementById('vol-slider');
+const volVal    = document.getElementById('vol-val');
+const volIcon   = document.getElementById('vol-icon');
+const listEl    = document.getElementById('playlist-list');
+const countEl   = document.getElementById('playlist-count');
+const toastEl   = document.getElementById('toast');
+
+/* ══════════════════════════════════════════════════
+   INIT
+══════════════════════════════════════════════════ */
+function init() {
+  countEl.textContent = TRACKS.length + ' tracks';
+  buildPlaylist();
+  loadTrack(0, false);
+  audio.volume = 0.7;
+  updateVolSlider(70);
+}
+
+/* ══════════════════════════════════════════════════
+   PLAYLIST
+══════════════════════════════════════════════════ */
+function buildPlaylist() {
+  listEl.innerHTML = '';
+  TRACKS.forEach((t, i) => {
+    const div = document.createElement('div');
+    div.className = 'track-item' + (i === currentIndex ? ' active' : '');
+    div.id = 'track-' + i;
+    div.onclick = () => selectTrack(i);
+    div.innerHTML = `
+      <div class="track-num">${String(i + 1).padStart(2, '0')}</div>
+      <div class="play-mini">▶</div>
+      <div class="track-emoji">${t.emoji}</div>
+      <div class="track-text">
+        <div class="track-name">${t.title}</div>
+        <div class="track-artist">${t.artist}</div>
+      </div>
+      <div class="eq-bars">
+        <div class="eq-bar" style="height:6px"></div>
+        <div class="eq-bar" style="height:10px"></div>
+        <div class="eq-bar" style="height:4px"></div>
+      </div>
+      <div class="track-dur" id="dur-${i}">—</div>`;
+    listEl.appendChild(div);
+  });
+}
+
+function updateActiveItem() {
+  document.querySelectorAll('.track-item').forEach((el, i) => {
+    el.classList.toggle('active', i === currentIndex);
+    el.classList.toggle('playing', i === currentIndex && isPlaying);
+  });
+  // scroll active into view
+  const active = document.getElementById('track-' + currentIndex);
+  if (active) active.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+/* ══════════════════════════════════════════════════
+   LOAD TRACK
+══════════════════════════════════════════════════ */
+function loadTrack(index, autoStart) {
+  currentIndex = index;
+  const t = TRACKS[index];
+  audio.src = t.src;
+  audio.load();
+  titleEl.textContent  = t.title;
+  artistEl.textContent = t.artist;
+  genreEl.textContent  = t.genre;
+  albumArt.textContent = t.emoji;
+  // reset progress
+  fillEl.style.width = '0%';
+  curEl.textContent  = '0:00';
+  totEl.textContent  = '0:00';
+  titleEl.classList.add('fade');
+  setTimeout(() => titleEl.classList.remove('fade'), 400);
+  updateActiveItem();
+  if (autoStart) {
+    audio.play().then(() => { setPlayState(true); }).catch(handleErr);
+  } else {
+    setPlayState(false);
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   PLAY STATE
+══════════════════════════════════════════════════ */
+function setPlayState(playing) {
+  isPlaying = playing;
+  // album spin
+  albumArt.classList.toggle('paused', !playing);
+  // icon swap
+  playIcon.innerHTML = playing
+    ? '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>'  // pause
+    : '<path d="M8 5v14l11-7z"/>';  // play
+  updateActiveItem();
+}
+
+/* ══════════════════════════════════════════════════
+   CONTROLS
+══════════════════════════════════════════════════ */
+function togglePlay() {
+  if (isPlaying) {
+    audio.pause();
+    setPlayState(false);
+  } else {
+    audio.play().then(() => setPlayState(true)).catch(handleErr);
+  }
+}
+
+function nextTrack() {
+  let next;
+  if (isShuffle) {
+    do { next = Math.floor(Math.random() * TRACKS.length); } while (next === currentIndex && TRACKS.length > 1);
+  } else {
+    next = (currentIndex + 1) % TRACKS.length;
+  }
+  loadTrack(next, isPlaying || isAutoplay);
+}
+
+function prevTrack() {
+  // if > 3s in, restart; else go back
+  if (audio.currentTime > 3) {
+    audio.currentTime = 0;
+    return;
+  }
+  const prev = (currentIndex - 1 + TRACKS.length) % TRACKS.length;
+  loadTrack(prev, isPlaying || isAutoplay);
+}
+
+function selectTrack(i) {
+  loadTrack(i, true);
+}
+
+function toggleShuffle() {
+  isShuffle = !isShuffle;
+  document.getElementById('btn-shuffle').classList.toggle('active', isShuffle);
+  showToast(isShuffle ? '🔀 Shuffle on' : '🔀 Shuffle off');
+}
+
+function toggleRepeat() {
+  repeatMode = (repeatMode + 1) % 3;
+  const btn = document.getElementById('btn-repeat');
+  btn.classList.toggle('active', repeatMode > 0);
+  const labels = ['🔁 Repeat off', '🔁 Repeat all', '🔂 Repeat one'];
+  showToast(labels[repeatMode]);
+  // update icon for repeat-one
+  if (repeatMode === 2) {
+    btn.querySelector('svg').style.filter = 'drop-shadow(0 0 4px var(--accent))';
+  } else {
+    btn.querySelector('svg').style.filter = '';
+  }
+}
+
+function toggleAutoplay() {
+  isAutoplay = !isAutoplay;
+  const btn = document.getElementById('btn-auto');
+  btn.classList.toggle('on', isAutoplay);
+  document.getElementById('auto-label').textContent = isAutoplay ? 'On' : 'Off';
+  showToast(isAutoplay ? '▶ Autoplay on' : '⏹ Autoplay off');
+}
+
+/* ══════════════════════════════════════════════════
+   VOLUME
+══════════════════════════════════════════════════ */
+function setVolume(val) {
+  const v = parseInt(val);
+  audio.volume = v / 100;
+  volVal.textContent = v;
+  lastVol = v;
+  isMuted = v === 0;
+  volIcon.textContent = v === 0 ? '🔇' : v < 40 ? '🔉' : '🔊';
+  updateVolSlider(v);
+}
+
+function updateVolSlider(v) {
+  volSlider.value = v;
+  volSlider.style.background = `linear-gradient(90deg, var(--accent) ${v}%, rgba(255,255,255,0.1) ${v}%)`;
+}
+
+function toggleMute() {
+  if (isMuted) {
+    setVolume(lastVol || 70);
+  } else {
+    lastVol = parseInt(volSlider.value);
+    setVolume(0);
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   PROGRESS
+══════════════════════════════════════════════════ */
+function formatTime(s) {
+  if (isNaN(s) || !isFinite(s)) return '0:00';
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return `${m}:${sec.toString().padStart(2, '0')}`;
+}
+
+audio.addEventListener('timeupdate', () => {
+  if (!audio.duration) return;
+  const pct = (audio.currentTime / audio.duration) * 100;
+  fillEl.style.width = pct + '%';
+  curEl.textContent = formatTime(audio.currentTime);
+});
+
+audio.addEventListener('loadedmetadata', () => {
+  totEl.textContent = formatTime(audio.duration);
+  // update playlist item duration
+  document.getElementById('dur-' + currentIndex).textContent = formatTime(audio.duration);
+});
+
+audio.addEventListener('ended', () => {
+  if (repeatMode === 2) {           // repeat one
+    audio.currentTime = 0;
+    audio.play();
+  } else if (isAutoplay || repeatMode === 1) {
+    nextTrack();
+  } else {
+    setPlayState(false);
+  }
+});
+
+// seek by clicking progress bar
+document.getElementById('progress-wrap').addEventListener('click', function(e) {
+  const rect = this.getBoundingClientRect();
+  const pct  = (e.clientX - rect.left) / rect.width;
+  audio.currentTime = pct * audio.duration;
+});
+
+/* ══════════════════════════════════════════════════
+   KEYBOARD SHORTCUTS
+══════════════════════════════════════════════════ */
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT') return;
+  switch(e.code) {
+    case 'Space':    e.preventDefault(); togglePlay(); break;
+    case 'ArrowRight': nextTrack(); break;
+    case 'ArrowLeft':  prevTrack(); break;
+    case 'ArrowUp':
+      e.preventDefault();
+      setVolume(Math.min(100, parseInt(volSlider.value) + 5));
+      break;
+    case 'ArrowDown':
+      e.preventDefault();
+      setVolume(Math.max(0, parseInt(volSlider.value) - 5));
+      break;
+    case 'KeyM': toggleMute(); break;
+    case 'KeyS': toggleShuffle(); break;
+  }
+});
+
+/* ══════════════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════════════ */
+let toastTimer;
+function showToast(msg) {
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toastEl.classList.remove('show'), 1800);
+}
+
+/* ══════════════════════════════════════════════════
+   ERROR HANDLING
+══════════════════════════════════════════════════ */
+function handleErr(err) {
+  console.warn('Audio error:', err);
+  showToast('⚠ Could not play audio. Check connection.');
+  setPlayState(false);
+}
+
+audio.addEventListener('error', () => {
+  showToast('⚠ Track failed to load — skipping...');
+  setTimeout(nextTrack, 1200);
+});
+
+/* ══════════════════════════════════════════════════
+   START
+══════════════════════════════════════════════════ */
+init();
+</script>
+</body>
+</html>

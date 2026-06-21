@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ambuj Sharma | Portfolio</title>
+
+  <!-- ✅ Link to separate CSS file -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ============================================================
+       NAVIGATION
+  ============================================================ -->
+  <header id="navbar">
+    <div class="container nav-inner">
+      <div class="logo" onclick="scrollToTop()">Ambuj<span>Sharma</span></div>
+      <nav class="nav-links">
+        <a onclick="goTo('#about')">About</a>
+        <a onclick="goTo('#skills')">Skills</a>
+        <a onclick="goTo('#journey')">Journey</a>
+        <a onclick="goTo('#projects')">Projects</a>
+        <a onclick="goTo('#education')">Education</a>
+        <a onclick="goTo('#contact')">Contact</a>
+        <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">&#9790; Light</button>
+      </nav>
+      <button class="hamburger" onclick="toggleMenu()" id="hamburger">&#9776;</button>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a onclick="goTo('#about')">About</a>
+      <a onclick="goTo('#skills')">Skills</a>
+      <a onclick="goTo('#journey')">Journey</a>
+      <a onclick="goTo('#projects')">Projects</a>
+      <a onclick="goTo('#education')">Education</a>
+      <a onclick="goTo('#contact')">Contact</a>
+    </div>
+  </header>
+
+
+  <!-- ============================================================
+       HERO SECTION
+  ============================================================ -->
+  <section id="hero">
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+
+    <div class="hero-content">
+      <div class="badge"><span class="ping"></span> Currently Interning at Code Alpha</div>
+      <h1>Hi, I'm <span class="gradient-text">Ambuj Sharma</span></h1>
+
+      <p class="hero-role">
+        I'm a <span id="typedText"></span><span class="cursor">|</span>
+      </p>
+
+      <p class="hero-desc">
+        3rd year B.Tech IT student passionate about building creative digital solutions.
+        Turning ideas into reality, one project at a time.
+      </p>
+
+      <div class="hero-btns">
+        <a class="btn btn-primary" onclick="goTo('#projects')">View Projects &rarr;</a>
+        <a class="btn btn-outline" onclick="goTo('#contact')">&#9993; Contact Me</a>
+      </div>
+
+      <div class="socials">
+        <a href="https://github.com" target="_blank">GitHub</a>
+        <a href="https://linkedin.com" target="_blank">LinkedIn</a>
+        <a href="mailto:ambuj@example.com">&#9993; Email</a>
+      </div>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="scroll-ind">
+      <div class="scroll-mouse"><div class="scroll-dot"></div></div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       ABOUT SECTION
+  ============================================================ -->
+  <section id="about" class="section bg-card">
+    <div class="container">
+      <div class="section-header">
+        <h2>About Me</h2>
+        <div class="underline"></div>
+      </div>
+
+      <div class="about-grid">
+        <!-- Avatar -->
+        <div class="about-img-wrap reveal">
+          <div class="avatar-box">
+            <div class="avatar-initials">AS</div>
+            <div class="avatar-name">Ambuj Sharma</div>
+          </div>
+          <div class="about-glow"></div>
+        </div>
+
+        <!-- Text -->
+        <div class="about-text reveal">
+          <h3>Curious Student, Creative Builder</h3>
+          <p>I'm Ambuj Sharma, a 3rd year B.Tech Information Technology student with a genuine passion for building things on the web.</p>
+          <p>From interactive games to smart attendance systems for rural communities, my projects reflect my curiosity and drive to make technology useful in the real world.</p>
+
+          <div class="strengths">
+            <div class="strength"><span class="ico">&#128187;</span> Web Development</div>
+            <div class="strength"><span class="ico">&#128161;</span> Problem Solving</div>
+            <div class="strength"><span class="ico">&#128218;</span> Fast Learner</div>
+            <div class="strength"><span class="ico">&#128101;</span> Team Player</div>
+          </div>
+
+          <div class="about-stats">
+            <div class="astat"><span class="astat-num">3rd</span><span class="astat-lbl">Year B.Tech IT</span></div>
+            <div class="astat"><span class="astat-num">4</span><span class="astat-lbl">Projects Built</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       SKILLS SECTION
+  ============================================================ -->
+  <section id="skills" class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Technical Arsenal</h2>
+        <div class="underline"></div>
+      </div>
+
+      <div class="skills-wrap">
+
+        <!-- Frontend -->
+        <div class="skill-cat reveal">
+          <h3>&#127760; Frontend</h3>
+          <div class="skill-row"><div class="skill-lbl"><span class="skill-ico">&#128225;</span>HTML5</div><div class="skill-bar"><div class="skill-fill" data-w="90"></div></div><span class="skill-pct">90%</span></div>
+          <div class="skill-row"><div class="skill-lbl"><span class="skill-ico">&#127912;</span>CSS3</div><div class="skill-bar"><div class="skill-fill" data-w="85"></div></div><span class="skill-pct">85%</span></div>
+          <div class="skill-row"><div class="skill-lbl"><span class="skill-ico">&#9889;</span>JavaScript</div><div class="skill-bar"><div class="skill-fill" data-w="80"></div></div><span class="skill-pct">80%</span></div>
+          <div class="skill-row"><div class="skill-lbl"><span class="skill-ico">&#128260;</span>React (Learning)</div><div class="skill-bar"><div class="skill-fill" data-w="45"></div></div><span class="skill-pct">45%</span></div>
+        </div>
+
+        <!-- Backend -->
+        <div class="skill-cat reveal">
+          <h3>&#9881; Backend &amp; Database</h3>
+          <div class="skill-row"><div class="skill-lbl"><span class="skill-ico">&#128013;</span>Python</div><div class="skill-bar"><div class="skill-fill" data-w="75"></div></div><span class="skill-pct">75%</span></div>
+          <div class="skill-row"><div class="skill-lbl"><span class="skill-ico">&#128202;</span>MySQL</div><div class="skill-bar"><div class="skill-fill" data-w="65"></div></div><span class="skill-pct">65%</span></div>
+          <div class="skill-row"><div class="skill-lbl"><span class="skill-ico">&#128270;</span>Node.js (Learning)</div><div class="skill-bar"><div class="skill-fill" data-w="40"></div></div><span class="skill-pct">40%</span></div>
+        </div>
+
+        <!-- Programming -->
+        <div class="skill-cat reveal">
+          <h3>&#128187; Programming</h3>
+          <div class="skill-row"><div class="skill-lbl"><span class="skill-ico">&#169;</span>C Language</div><div class="skill-bar"><div class="skill-fill" data-w="80"></div></div><span class="skill-pct">80%</span></div>
+          <div class="skill-row"><div class="skill-lbl"><span class="skill-ico">&#43;</span>C++</div><div class="skill-bar"><div class="skill-fill" data-w="70"></div></div><span class="skill-pct">70%</span></div>
+          <div class="skill-row"><div class="skill-lbl"><span class="skill-ico">&#129504;</span>DSA</div><div class="skill-bar"><div class="skill-fill" data-w="60"></div></div><span class="skill-pct">60%</span></div>
+        </div>
+
+        <!-- Tools -->
+        <div class="skill-cat reveal">
+          <h3>&#128295; Tools</h3>
+          <div class="skill-row"><div class="skill-lbl"><span class="skill-ico">&#128336;</span>Git</div><div class="skill-bar"><div class="skill-fill" data-w="70"></div></div><span class="skill-pct">70%</span></div>
+          <div class="skill-row"><div class="skill-lbl"><span class="skill-ico">&#128279;</span>GitHub</div><div class="skill-bar"><div class="skill-fill" data-w="70"></div></div><span class="skill-pct">70%</span></div>
+          <div class="skill-row"><div class="skill-lbl"><span class="skill-ico">&#128221;</span>VS Code</div><div class="skill-bar"><div class="skill-fill" data-w="90"></div></div><span class="skill-pct">90%</span></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       STATS BAND
+  ============================================================ -->
+  <div class="stats-band">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-card reveal">
+          <div class="stat-ico">&#128196;</div>
+          <div class="stat-num counter" data-target="4">0</div>
+          <div class="stat-label">Projects Built</div>
+        </div>
+        <div class="stat-card reveal">
+          <div class="stat-ico">&#127891;</div>
+          <div class="stat-num">3rd</div>
+          <div class="stat-label">Year B.Tech IT</div>
+        </div>
+        <div class="stat-card reveal">
+          <div class="stat-ico">&#128187;</div>
+          <div class="stat-num"><span class="counter" data-target="8">0</span>+</div>
+          <div class="stat-label">Technologies</div>
+        </div>
+        <div class="stat-card reveal">
+          <div class="stat-ico">&#128188;</div>
+          <div class="stat-num counter" data-target="1">0</div>
+          <div class="stat-label">Internship</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       JOURNEY / TIMELINE SECTION
+  ============================================================ -->
+  <section id="journey" class="section bg-card">
+    <div class="container">
+      <div class="section-header">
+        <h2>My Journey</h2>
+        <div class="underline"></div>
+        <p class="section-sub">From a curious beginner to a builder — here's how I've been growing.</p>
+      </div>
+
+      <div class="timeline">
+
+        <div class="tl-item reveal">
+          <div class="tl-icon">&#128218;</div>
+          <div class="tl-card">
+            <div class="tl-head">
+              <div class="tl-title-row"><h3>Started B.Tech IT</h3></div>
+              <span class="tl-date">2024</span>
+            </div>
+            <p>Began my journey in Information Technology. Got introduced to programming fundamentals, C, and the world of computers.</p>
+            <div class="tags"><span>C Programming</span><span>Problem Solving</span><span>Basics of IT</span></div>
+          </div>
+        </div>
+
+        <div class="tl-item reveal">
+          <div class="tl-icon">&#128187;</div>
+          <div class="tl-card">
+            <div class="tl-head">
+              <div class="tl-title-row"><h3>Learned Web Development</h3></div>
+              <span class="tl-date">2025</span>
+            </div>
+            <p>Dived into web development — learned HTML, CSS, and JavaScript. Built my first projects including a Calculator and a Music Player Interface.</p>
+            <div class="tags"><span>HTML</span><span>CSS</span><span>JavaScript</span><span>UI Design</span></div>
+          </div>
+        </div>
+
+        <div class="tl-item reveal">
+          <div class="tl-icon">&#127918;</div>
+          <div class="tl-card">
+            <div class="tl-head">
+              <div class="tl-title-row"><h3>Built the Crossword Puzzle Game</h3></div>
+              <span class="tl-date">2025</span>
+            </div>
+            <p>Created a fully interactive crossword puzzle game using Vanilla JavaScript. Sharpened my logic-building and DOM manipulation skills.</p>
+            <div class="tags"><span>JavaScript</span><span>Game Logic</span><span>DOM</span><span>Algorithms</span></div>
+          </div>
+        </div>
+
+        <!-- INTERNSHIP — highlighted card -->
+        <div class="tl-item reveal">
+          <div class="tl-icon intern">&#128188;</div>
+          <div class="tl-card intern-card">
+            <div class="tl-head">
+              <div class="tl-title-row">
+                <h3>Internship at Code Alpha</h3>
+                <span class="intern-badge">Internship</span>
+              </div>
+              <span class="tl-date">2026 &mdash; Present</span>
+            </div>
+            <p>Currently working as an intern at Code Alpha, gaining real-world experience and applying web development skills in a professional environment.</p>
+            <div class="tags t-primary"><span>Web Development</span><span>Real-World Experience</span><span>Ongoing</span></div>
+          </div>
+        </div>
+
+        <div class="tl-item reveal">
+          <div class="tl-icon">&#128640;</div>
+          <div class="tl-card">
+            <div class="tl-head">
+              <div class="tl-title-row"><h3>Working on Automated Attendance</h3></div>
+              <span class="tl-date">2026 &mdash; Present</span>
+            </div>
+            <p>Building an automated attendance system for rural areas using Python and computer vision. Combining tech with real-world social impact.</p>
+            <div class="tags"><span>Python</span><span>OpenCV</span><span>Machine Learning</span><span>Ongoing</span></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       PROJECTS SECTION
+  ============================================================ -->
+  <section id="projects" class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2>My Projects</h2>
+        <div class="underline"></div>
+        <p class="section-sub">Projects I've built to learn, experiment, and solve real problems.</p>
+      </div>
+
+      <!-- Filter Buttons -->
+      <div class="filter-row">
+        <button class="fbtn active" onclick="filterProj('all', this)">All</button>
+        <button class="fbtn" onclick="filterProj('js', this)">JavaScript</button>
+        <button class="fbtn" onclick="filterProj('py', this)">Python</button>
+      </div>
+
+      <div class="projects-grid">
+
+        <!-- Project 1 -->
+        <div class="proj-card reveal" data-cat="js">
+          <div class="proj-img" style="background: linear-gradient(135deg,#1e3a8a55,#4338ca55,#7c3aed55)">
+            <span class="proj-emoji">&#129513;</span>
+            <div class="proj-overlay">
+              <a href="#" class="ov-btn">GH</a>
+              <a href="#" class="ov-btn p">&#8599;</a>
+            </div>
+          </div>
+          <div class="proj-body">
+            <h3>Online Crossword Puzzle Game</h3>
+            <p>An interactive crossword puzzle game playable in the browser with dynamic grid, clue system, and real-time letter checking.</p>
+            <div class="tech-tags"><span>HTML</span><span>CSS</span><span>JavaScript</span></div>
+          </div>
+        </div>
+
+        <!-- Project 2 -->
+        <div class="proj-card reveal" data-cat="py">
+          <div class="proj-img" style="background: linear-gradient(135deg,#06564455,#0f766e55,#0891b255)">
+            <span class="proj-emoji">&#128205;</span>
+            <div class="wip-badge">&#8987; In Progress</div>
+            <div class="proj-overlay">
+              <a href="#" class="ov-btn">GH</a>
+            </div>
+          </div>
+          <div class="proj-body">
+            <h3>Automated Attendance System</h3>
+            <p>Smart attendance solution for rural areas using Python and computer vision. Makes attendance accessible in low-connectivity regions.</p>
+            <div class="tech-tags"><span>Python</span><span>OpenCV</span><span>Machine Learning</span></div>
+          </div>
+        </div>
+
+        <!-- Project 3 -->
+        <div class="proj-card reveal" data-cat="js">
+          <div class="proj-img" style="background: linear-gradient(135deg,#92400e55,#b4530055,#ca8a0455)">
+            <span class="proj-emoji">&#128290;</span>
+            <div class="proj-overlay">
+              <a href="#" class="ov-btn">GH</a>
+              <a href="#" class="ov-btn p">&#8599;</a>
+            </div>
+          </div>
+          <div class="proj-body">
+            <h3>Calculator App</h3>
+            <p>A clean, fully functional calculator with arithmetic operations, keyboard input, and a smooth responsive UI.</p>
+            <div class="tech-tags"><span>HTML</span><span>CSS</span><span>JavaScript</span></div>
+          </div>
+        </div>
+
+        <!-- Project 4 -->
+        <div class="proj-card reveal" data-cat="js">
+          <div class="proj-img" style="background: linear-gradient(135deg,#86198f55,#be185d55,#e1123455)">
+            <span class="proj-emoji">&#127925;</span>
+            <div class="proj-overlay">
+              <a href="#" class="ov-btn">GH</a>
+              <a href="#" class="ov-btn p">&#8599;</a>
+            </div>
+          </div>
+          <div class="proj-body">
+            <h3>Music Player Interface</h3>
+            <p>A visually appealing music player UI with track listing, play/pause/skip controls, progress bar and smooth animations.</p>
+            <div class="tech-tags"><span>HTML</span><span>CSS</span><span>JavaScript</span></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       EDUCATION SECTION
+  ============================================================ -->
+  <section id="education" class="section bg-card">
+    <div class="container">
+      <div class="section-header">
+        <h2>Education</h2>
+        <div class="underline"></div>
+      </div>
+
+      <div class="edu-card reveal">
+        <div class="edu-ico">&#127891;</div>
+        <div class="edu-body">
+          <div class="edu-period">2024 &mdash; 2028 </div>
+          <div class="edu-title">B.Tech &mdash; Information Technology</div>
+          <div class="edu-status"><span class="pur-dot"></span> Currently Pursuing &mdash; 3rd Year</div>
+          <p>Studying the core pillars of Information Technology — from programming and databases to networks and software engineering.</p>
+          <h4>&#128218; Relevant Coursework</h4>
+          <div class="course-tags">
+            <span>Data Structures &amp; Algorithms</span>
+            <span>Database Management</span>
+            <span>Web Technologies</span>
+            <span>OOP</span>
+            <span>Operating Systems</span>
+            <span>Computer Networks</span>
+            <span>Software Engineering</span>
+            <span>Python Programming</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       CERTIFICATIONS SECTION
+  ============================================================ -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Courses &amp; Achievements</h2>
+        <div class="underline"></div>
+      </div>
+
+      <div class="certs-grid">
+        <div class="cert-card reveal"><span class="cert-ico">&#128187;</span><h3>Web Development Fundamentals</h3><p>Online Learning Platform</p><span class="cert-year">2025</span></div>
+        <div class="cert-card reveal"><span class="cert-ico">&#128013;</span><h3>Python for Beginners</h3><p>Online Course</p><span class="cert-year">2025</span></div>
+        <div class="cert-card reveal"><span class="cert-ico">&#9889;</span><h3>JavaScript Essentials</h3><p>Self-Study &amp; Projects</p><span class="cert-year">2025</span></div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       CONTACT SECTION
+  ============================================================ -->
+  <section id="contact" class="section bg-card">
+    <div class="container">
+      <div class="section-header">
+        <h2>Contact Me</h2>
+        <div class="underline"></div>
+        <p class="section-sub">Have a question or want to work together? Feel free to reach out!</p>
+      </div>
+
+      <div class="contact-wrap">
+        <!-- Contact Info -->
+        <div class="reveal">
+          <div class="contact-item"><span class="ico">&#9993;</span><div><strong>Email</strong><p>ambujsharma7897@example.com</p></div></div>
+          <div class="contact-item"><span class="ico">&#128222;</span><div><strong>Phone</strong><p>+91 9119978382</p></div></div>
+          <div class="contact-item"><span class="ico">&#128205;</span><div><strong>Location</strong><p>India</p></div></div>
+          <div class="c-socials">
+            <a href="https://github.com" target="_blank">GH</a>
+            <a href="https://linkedin.com" target="_blank">in</a>
+            <a href="mailto:ambuj@example.com">&#9993;</a>
+          </div>
+        </div>
+
+        <!-- Contact Form -->
+        <form class="contact-form reveal" onsubmit="sendForm(event)">
+          <div class="form-grp"><label>Name</label><input type="text" placeholder="Your name" required /></div>
+          <div class="form-grp"><label>Email</label><input type="email" placeholder="your@email.com" required /></div>
+          <div class="form-grp"><label>Subject</label><input type="text" placeholder="Subject" required /></div>
+          <div class="form-grp"><label>Message</label><textarea rows="5" placeholder="Your message..." required></textarea></div>
+          <button type="submit" class="btn btn-primary btn-full">Send Message &#9993;</button>
+          <div class="form-ok" id="formOk">&#10003; Message sent! I'll get back to you soon.</div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer>
+    <div class="container foot-inner">
+      <div class="foot-brand">
+        <div class="logo" onclick="scrollToTop()">Ambuj<span>Sharma</span></div>
+        <p>3rd year B.Tech IT student passionate about building creative web projects. Open to internships and collaboration.</p>
+        <div class="socials" style="justify-content:flex-start">
+          <a href="https://github.com" target="_blank">GitHub</a>
+          <a href="https://linkedin.com" target="_blank">LinkedIn</a>
+          <a href="mailto:ambuj@example.com">Email</a>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h4>Quick Links</h4>
+        <a onclick="goTo('#about')">About Me</a>
+        <a onclick="goTo('#skills')">Skills</a>
+        <a onclick="goTo('#projects')">Projects</a>
+        <a onclick="goTo('#education')">Education</a>
+      </div>
+      <div class="foot-col">
+        <h4>Connect</h4>
+        <a href="https://github.com" target="_blank">GitHub</a>
+        <a href="https://linkedin.com" target="_blank">LinkedIn</a>
+        <a onclick="goTo('#contact')">Contact Me</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <p>&copy; <span id="yr"></span> Ambuj Sharma. All rights reserved.</p>
+      <p>Built with HTML, CSS &amp; JavaScript</p>
+    </div>
+  </footer>
+
+  <!-- Back to top button -->
+  <button class="btt" id="btt" onclick="scrollToTop()">&#8679;</button>
+
+  <!-- ✅ Link to separate JS file (at the bottom so HTML loads first) -->
+  <script src="script.js"></script>
+
+</body>
+</html>
